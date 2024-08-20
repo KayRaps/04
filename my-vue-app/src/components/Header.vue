@@ -42,20 +42,40 @@
           id="navbar-dropdown"
         >
           <ul class="flex flex-col top-10 font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-500 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
+            <!-- Home Link -->
+            <li>
+              <router-link
+                to="/"
+                class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700"
+              >
+                Home
+              </router-link>
+            </li>
+
+            <!-- Products Link -->
+            <li>
+              <router-link
+                to="/products"
+                class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700"
+              >
+                Products
+              </router-link>
+            </li>
+
             <!-- Wishlist Link -->
             <li>
               <router-link
                 to="/wishlist"
                 class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700"
               >
-                Wishlist
+                Wishlist ({{ wishlistItemCount }})
               </router-link>
             </li>
 
             <!-- Cart Link (with badge) -->
             <li class="relative hidden md:block lg:block">
               <div class="absolute left-3 top-0">
-                <p class="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">2</p>
+                <p class="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">{{ cartItemCount }}</p>
               </div>
               <router-link to="/cart" class="text-white hover:bg-gray-700">
                 <svg
@@ -81,42 +101,72 @@
                 to="/cart"
                 class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700"
               >
-                Cart
+                Cart ({{ cartItemCount }})
               </router-link>
             </li>
 
-            <!-- Login Link -->
+            <!-- Compare Link -->
             <li>
               <router-link
+                to="/compare"
+                class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700"
+              >
+                Compare ({{ comparisonCount }})
+              </router-link>
+            </li>
+
+            <!-- Login/Logout Link -->
+            <li>
+              <router-link
+                v-if="!isLoggedIn"
                 to="/login"
                 class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700"
               >
                 Login
               </router-link>
+              <a
+                v-else
+                href="#"
+                @click.prevent="logout"
+                class="block py-2 px-3 text-white rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700"
+              >
+                Logout
+              </a>
             </li>
           </ul>
         </div>
       </div>
     </nav>
+    <ThemeToggle />
   </header>
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
+import ThemeToggle from './ThemeToggle.vue';
 
-export default {
-  name: "Header",
-  setup() {
-    const showNavbar = ref(false);
+defineOptions({
+  name: 'Header'
+})
 
-    const toggleNavbar = () => {
-      showNavbar.value = !showNavbar.value;
-    };
+const store = useStore();
+const router = useRouter();
+const showNavbar = ref(false);
 
-    return {
-      showNavbar,
-      toggleNavbar,
-    };
-  },
+const toggleNavbar = () => {
+  showNavbar.value = !showNavbar.value;
 };
+
+const isLoggedIn = computed(() => store.getters.isLoggedIn);
+
+const logout = () => {
+  store.dispatch("logout");
+  router.push("/login");
+};
+
+const cartItemCount = computed(() => store.getters.cartItemCount);
+const wishlistItemCount = computed(() => store.getters.wishlistItemCount);
+const comparisonCount = computed(() => store.getters.comparisonList.length);
 </script>

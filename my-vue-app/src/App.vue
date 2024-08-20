@@ -7,9 +7,11 @@
   </div>
 </template>
 
-<script>
-import { defineComponent, ref, onMounted } from "vue";
-import Header from "./components/Header.vue";
+<script setup>
+import { ref, onMounted, computed } from 'vue'
+import { useStore } from 'vuex'
+import Header from './components/Header.vue'
+import WishlistIcon from './components/WishlistIcon.vue' // Make sure this path is correct
 
 /**
  * The main application component.
@@ -33,17 +35,23 @@ export default defineComponent({
     /**
      * The header component.
      *
-     * @type {Header}
+     * 
      */
-    Header,
+    Header
+  
   },
 
+  components: {
+    WishlistIcon,
+  },
   /**
    * The setup function for the component.
    *
    * @returns {object} The component's data and methods.
    */
   setup() {
+    const store = useStore();
+
     /**
      * The products data.
      *
@@ -56,30 +64,24 @@ export default defineComponent({
      *
      * @async
      */
-    onMounted(async () => {
-      try {
-        /**
-         * The response from the API.
-         *
-         * @type {Response}
-         */
-        const res = await fetch("https://fakestoreapi.com/products");
+     onMounted(async () => {
+  try {
+    const res = await fetch("https://fakestoreapi.com/products")
+    products.value = await res.json()
+  } catch (error) {
+    console.error("Failed to fetch products:", error)
+  }
+})
 
-        /**
-         * Sets the products data from the API response.
-         *
-         * @type {array}
-         */
-        products.value = await res.json();
-      } catch (error) {
-        /**
-         * Logs an error message if the fetch fails.
-         *
-         * @param {Error} error The error object.
-         */
-        console.error("Failed to fetch products:", error);
-      }
-    });
+const isAuthenticated = computed(() => {
+  console.log("isAuthenticated:", store.getters.isAuthenticated)
+  return store.getters.isAuthenticated
+})
+      });
+
+      return {
+        isAuthenticated,
+      };
 
     /**
      * Returns the component's data and methods.
@@ -109,5 +111,12 @@ header {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2em;
+}
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
 }
 </style>
