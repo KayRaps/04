@@ -141,15 +141,11 @@
   </header>
 </template>
 
-<script>
+<script setup>
 import { ref, computed } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import ThemeToggle from './ThemeToggle.vue';
-
-defineOptions({
-  name: 'Header'
-})
 
 const store = useStore();
 const router = useRouter();
@@ -169,4 +165,11 @@ const logout = () => {
 const cartItemCount = computed(() => store.getters.cartItemCount);
 const wishlistItemCount = computed(() => store.getters.wishlistItemCount);
 const comparisonCount = computed(() => store.getters.comparisonList.length);
+</script>
+
+<script>
+// If you need to define options like 'name', you can do it here
+export default {
+  name: 'Header'
+}
 </script>
