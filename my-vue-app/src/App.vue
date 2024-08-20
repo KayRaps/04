@@ -11,60 +11,20 @@
 import { ref, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
 import Header from './components/Header.vue'
-import WishlistIcon from './components/WishlistIcon.vue' // Make sure this path is correct
+import WishlistIcon from './components/WishlistIcon.vue'
 
-/**
- * The main application component.
- *
- * @component
- */
-export default defineComponent({
-  /**
-   * The name of the component.
-   *
-   * @type {string}
-   */
-  name: "App",
+// Define component options
+defineOptions({
+  name: "App"
+})
 
-  /**
-   * The components used by this component.
-   *
-   * @type {object}
-   */
-  components: {
-    /**
-     * The header component.
-     *
-     * 
-     */
-    Header
-  
-  },
+const store = useStore()
 
-  components: {
-    WishlistIcon,
-  },
-  /**
-   * The setup function for the component.
-   *
-   * @returns {object} The component's data and methods.
-   */
-  setup() {
-    const store = useStore();
+// The products data
+const products = ref([])
 
-    /**
-     * The products data.
-     *
-     * @type {array}
-     */
-    const products = ref([]);
-
-    /**
-     * Fetches the products data from the API when the component is mounted.
-     *
-     * @async
-     */
-     onMounted(async () => {
+// Fetch products data from the API when the component is mounted
+onMounted(async () => {
   try {
     const res = await fetch("https://fakestoreapi.com/products")
     products.value = await res.json()
@@ -73,31 +33,11 @@ export default defineComponent({
   }
 })
 
+// Computed property for authentication status
 const isAuthenticated = computed(() => {
   console.log("isAuthenticated:", store.getters.isAuthenticated)
   return store.getters.isAuthenticated
 })
-      });
-
-      return {
-        isAuthenticated,
-      };
-
-    /**
-     * Returns the component's data and methods.
-     *
-     * @returns {object}
-     */
-    return {
-      /**
-       * The products data.
-       *
-       * @type {array}
-       */
-      products,
-    };
-  },
-});
 </script>
 
 <style>
@@ -112,6 +52,7 @@ header {
   margin: 0 auto;
   padding: 2em;
 }
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
